@@ -21,8 +21,8 @@ class PwaPushSubscriptionHandler {
 		applicationServerKey?: string | Uint8Array,
 		private readonly publishSubscription?: (
 			subscription: PushSubscription
-		) => Promise<void>,
-		private readonly unpublishSubscription?: () => Promise<void>
+		) => Promise<any>,
+		private readonly unpublishSubscription?: () => Promise<any>
 	) {
 		if (applicationServerKey) {
 			this.applicationServerKey =
