@@ -2,7 +2,7 @@
 
 Handling PWA push notifications subscription flow made easier. [MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/PushManager)
 
-## Instalation
+## Installation
 
 `npm install --save-dev pwa-push-subscription-handler`
 
