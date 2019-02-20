@@ -1,6 +1,6 @@
 {
   "name": "pwa-push-subscription-handler",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Subscribe to push notifications made easier.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
