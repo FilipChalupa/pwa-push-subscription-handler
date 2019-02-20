@@ -70,3 +70,13 @@ $button.addEventListener('click', pwaPushSubscriptionHandler.toggle})
 ### Screencast
 
 ![UI example](./screencast.gif)
+
+### State
+
+- `'subscribed'` - user is subscribed - show button "Disable notifications"
+- `'not-subscribed'` - user is not yet subscibed or has unsubscribed - show button "Enable notifications"
+- `'updating'` - transitioning between subscribed and not-subscribed - disable button, show loading indicator
+- `'loading'` - waiting for service worker (may not finish on the first page load) - hide button
+- `'disabled'` - user/browser blocked notifications - hide button
+- `'not-supported'` - browser doesn't support push notifications - hide button
+- `'error'` - something went wrong, button won't work correctly - hide or disable button
