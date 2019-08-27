@@ -94,20 +94,20 @@ class PwaPushSubscriptionHandler {
 			console.warn(
 				`Trying to unsubscribe in state "${this.state}" is not allowed.`
 			)
-			return Promise.resolve()
+			return
 		}
 		if (!forceSilent) {
 			this.updateStatus('updating')
 		}
-		return this.serviceWorkerRegistration!.pushManager.getSubscription()
-			.then((subscription) => {
-				if (subscription) {
-					subscription.unsubscribe()
-				}
-				return null
-			})
-			.then(this.updateSubscription)
-			.catch(this.handleSubscriptionUpdateFailure)
+		const subscription = await this.serviceWorkerRegistration!.pushManager.getSubscription()
+		try {
+			if (subscription) {
+				await subscription.unsubscribe()
+			}
+			await this.updateSubscription(null)
+		} catch (error) {
+			this.handleSubscriptionUpdateFailure(error)
+		}
 	}
 
 	public toggle = async (): Promise<void> => {
