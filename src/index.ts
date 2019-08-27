@@ -66,23 +66,27 @@ class PwaPushSubscriptionHandler {
 			console.warn(
 				`Trying to subscribe in state "${this.state}" is not allowed.`
 			)
-			return Promise.resolve()
+			return
 		}
 		this.updateStatus('updating')
-		return Notification.requestPermission().then((result) => {
-			if (result === 'denied') {
-				this.updateStatus('disabled')
-			} else if (result === 'default') {
-				this.updateStatus('not-subscribed')
-			} else {
-				return this.serviceWorkerRegistration!.pushManager.subscribe({
-					userVisibleOnly: true,
-					applicationServerKey: this.applicationServerKey,
-				})
-					.then(this.updateSubscription)
-					.catch(this.handleSubscriptionUpdateFailure)
-			}
-		})
+		const result = await Notification.requestPermission()
+		if (result === 'denied') {
+			this.updateStatus('disabled')
+			return
+		}
+		if (result === 'default') {
+			this.updateStatus('not-subscribed')
+			return
+		}
+		try {
+			const subscription = await this.serviceWorkerRegistration!.pushManager.subscribe({
+				userVisibleOnly: true,
+				applicationServerKey: this.applicationServerKey,
+			})
+			await this.updateSubscription(subscription)
+		} catch (error) {
+			this.handleSubscriptionUpdateFailure(error)
+		}
 	}
 
 	public unsubscribe = async (forceSilent = false): Promise<void> => {
