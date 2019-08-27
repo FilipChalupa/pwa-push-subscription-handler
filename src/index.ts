@@ -15,7 +15,7 @@ class PwaPushSubscriptionHandler {
 	private state: PwaPushSubscriptionHandlerState = 'loading'
 	private callbacks: StatusChangeCallback[] = []
 	private serviceWorkerRegistration: ServiceWorkerRegistration | null = null
-	private applicationServerKey?: string
+	private readonly applicationServerKey?: string
 
 	constructor(
 		applicationServerKey?: string,
