@@ -110,6 +110,27 @@ class PwaPushSubscriptionHandler {
 		}
 	}
 
+	public resubscribe = async(): Promise<void> => {
+		if (this.state !== 'subscribed') {
+			console.warn(
+				`Trying to resubscribe in state "${this.state}" is not allowed.`
+			)
+			return
+		}
+		this.updateStatus('updating')
+		const subscription = await this.serviceWorkerRegistration!.pushManager.getSubscription()
+		if (subscription === null) {
+			console.warn('Subscription is lost.')
+			await this.requestStatus()
+			return
+		}
+		try {
+			await this.updateSubscription(subscription)
+		} catch (error) {
+			this.handleSubscriptionUpdateFailure(error)
+		}
+	}
+
 	public toggle = async (): Promise<void> => {
 		if (this.state === 'subscribed') {
 			return this.unsubscribe()
