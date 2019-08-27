@@ -31,34 +31,34 @@ class PwaPushSubscriptionHandler {
 		this.requestStatus()
 	}
 
-	private requestStatus() {
-		if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-			this.updateStatus('not-supported')
-		} else if (Notification.permission === 'denied') {
-			this.updateStatus('disabled')
-		} else {
-			navigator.serviceWorker.ready
-				.then((serviceWorkerRegistration) => {
-					this.serviceWorkerRegistration = serviceWorkerRegistration
-					return serviceWorkerRegistration.pushManager.getSubscription()
-				})
-				.then((subscription) => {
-					if (subscription === null) {
-						this.updateStatus('not-subscribed')
-					} else {
-						this.updateStatus('subscribed')
-					}
-				})
-				.catch((error) => {
-					console.error(error)
-					this.updateStatus('error')
-				})
-		}
+	private async requestStatus() {
+		this.updateStatus(await this.getStatus())
 	}
 
 	private updateStatus(status: PwaPushSubscriptionHandlerState) {
 		this.state = status
 		this.callbacks.forEach((callback) => callback(status))
+	}
+
+	public getStatus = async (): Promise<PwaPushSubscriptionHandlerState> => {
+		if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+			return 'not-supported'
+		}
+		if (Notification.permission === 'denied') {
+			return 'disabled'
+		}
+		try {
+			this.serviceWorkerRegistration = await navigator.serviceWorker.ready
+			const subscription = await this.serviceWorkerRegistration.pushManager.getSubscription()
+			if (subscription === null) {
+				return 'not-subscribed'
+			} else {
+				return 'subscribed'
+			}
+		} catch (error) {
+			console.error(error)
+			return 'error'
+		}
 	}
 
 	public subscribe = async (): Promise<void> => {
