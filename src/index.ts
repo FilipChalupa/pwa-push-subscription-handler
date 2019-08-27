@@ -15,20 +15,17 @@ class PwaPushSubscriptionHandler {
 	private state: PwaPushSubscriptionHandlerState = 'loading'
 	private callbacks: StatusChangeCallback[] = []
 	private serviceWorkerRegistration: ServiceWorkerRegistration | null = null
-	private applicationServerKey?: Uint8Array
+	private applicationServerKey?: string
 
 	constructor(
-		applicationServerKey?: string | Uint8Array,
+		applicationServerKey?: string,
 		private readonly publishSubscription?: (
 			subscription: PushSubscription
 		) => Promise<any>,
 		private readonly unpublishSubscription?: () => Promise<any>
 	) {
 		if (applicationServerKey) {
-			this.applicationServerKey =
-				typeof applicationServerKey === 'string'
-					? urlBase64ToUint8Array(applicationServerKey)
-					: applicationServerKey
+			this.applicationServerKey = applicationServerKey
 		}
 
 		this.requestStatus()
