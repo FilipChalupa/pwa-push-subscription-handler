@@ -1,5 +1,3 @@
-import urlBase64ToUint8Array from './urlBase64ToUint8Array'
-
 export type PwaPushSubscriptionHandlerState =
 	| 'loading'
 	| 'updating'
@@ -49,7 +47,8 @@ class PwaPushSubscriptionHandler {
 		}
 		try {
 			this.serviceWorkerRegistration = await navigator.serviceWorker.ready
-			const subscription = await this.serviceWorkerRegistration.pushManager.getSubscription()
+			const subscription =
+				await this.serviceWorkerRegistration.pushManager.getSubscription()
 			if (subscription === null) {
 				return 'not-subscribed'
 			} else {
@@ -79,13 +78,14 @@ class PwaPushSubscriptionHandler {
 			return
 		}
 		try {
-			const subscription = await this.serviceWorkerRegistration!.pushManager.subscribe({
-				userVisibleOnly: true,
-				applicationServerKey: this.applicationServerKey,
-			})
+			const subscription =
+				await this.serviceWorkerRegistration!.pushManager.subscribe({
+					userVisibleOnly: true,
+					applicationServerKey: this.applicationServerKey,
+				})
 			await this.updateSubscription(subscription)
 		} catch (error) {
-			this.handleSubscriptionUpdateFailure(error)
+			this.handleSubscriptionUpdateFailure(error as any)
 		}
 	}
 
@@ -99,18 +99,19 @@ class PwaPushSubscriptionHandler {
 		if (!forceSilent) {
 			this.updateStatus('updating')
 		}
-		const subscription = await this.serviceWorkerRegistration!.pushManager.getSubscription()
+		const subscription =
+			await this.serviceWorkerRegistration!.pushManager.getSubscription()
 		try {
 			if (subscription) {
 				await subscription.unsubscribe()
 			}
 			await this.updateSubscription(null)
 		} catch (error) {
-			this.handleSubscriptionUpdateFailure(error)
+			this.handleSubscriptionUpdateFailure(error as any)
 		}
 	}
 
-	public resubscribe = async(): Promise<void> => {
+	public resubscribe = async (): Promise<void> => {
 		if (this.state !== 'subscribed') {
 			console.warn(
 				`Trying to resubscribe in state "${this.state}" is not allowed.`
@@ -118,7 +119,8 @@ class PwaPushSubscriptionHandler {
 			return
 		}
 		this.updateStatus('updating')
-		const subscription = await this.serviceWorkerRegistration!.pushManager.getSubscription()
+		const subscription =
+			await this.serviceWorkerRegistration!.pushManager.getSubscription()
 		if (subscription === null) {
 			console.warn('Subscription is lost.')
 			await this.requestStatus()
@@ -127,7 +129,7 @@ class PwaPushSubscriptionHandler {
 		try {
 			await this.updateSubscription(subscription)
 		} catch (error) {
-			this.handleSubscriptionUpdateFailure(error)
+			this.handleSubscriptionUpdateFailure(error as any)
 		}
 	}
 
@@ -149,9 +151,10 @@ class PwaPushSubscriptionHandler {
 		subscription: PushSubscription | null
 	): Promise<void> => {
 		if (subscription === null) {
-			return (this.unpublishSubscription
-				? this.unpublishSubscription()
-				: Promise.resolve()
+			return (
+				this.unpublishSubscription
+					? this.unpublishSubscription()
+					: Promise.resolve()
 			)
 				.catch((error) => {
 					console.error(error)
@@ -160,9 +163,10 @@ class PwaPushSubscriptionHandler {
 					this.updateStatus('not-subscribed')
 				})
 		} else {
-			return (this.publishSubscription
-				? this.publishSubscription(subscription)
-				: Promise.resolve()
+			return (
+				this.publishSubscription
+					? this.publishSubscription(subscription)
+					: Promise.resolve()
 			)
 				.then(() => {
 					this.updateStatus('subscribed')
