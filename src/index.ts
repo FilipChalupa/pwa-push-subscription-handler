@@ -39,6 +39,10 @@ export class PwaPushSubscriptionHandler {
 	}
 
 	public getStatus = async (): Promise<PwaPushSubscriptionHandlerState> => {
+		if (!('navigator' in globalThis)) {
+			// Probably rendered on server
+			return 'loading'
+		}
 		if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
 			return 'not-supported'
 		}
