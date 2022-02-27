@@ -9,7 +9,7 @@ export type PwaPushSubscriptionHandlerState =
 
 type StatusChangeCallback = (status: PwaPushSubscriptionHandlerState) => void
 
-class PwaPushSubscriptionHandler {
+export class PwaPushSubscriptionHandler {
 	private state: PwaPushSubscriptionHandlerState = 'loading'
 	private callbacks: StatusChangeCallback[] = []
 	private serviceWorkerRegistration: ServiceWorkerRegistration | null = null
@@ -192,5 +192,3 @@ class PwaPushSubscriptionHandler {
 		this.callbacks = this.callbacks.filter((cb) => callback !== cb)
 	}
 }
-
-export default PwaPushSubscriptionHandler

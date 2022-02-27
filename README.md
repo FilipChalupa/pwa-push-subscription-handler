@@ -17,7 +17,7 @@ Handling PWA push notifications subscription flow made easier. [MDN docs](https:
 ### JavaScript
 
 ```javascript
-import PwaPushSubscriptionHandler from 'pwa-push-subscription-handler'
+import { PwaPushSubscriptionHandler } from 'pwa-push-subscription-handler'
 
 const $button = document.querySelector('#pushToggleButton')
 
